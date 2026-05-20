@@ -46,7 +46,7 @@ https://github.com/user-attachments/assets/789b7dad-dc6a-4b27-aa8b-fd7bede6dc26
 
 ```bash
 # Clone the repository
-git clone https://github.com/cortiz2894/showcase-images.git
+git clone <your-repo-url>
 
 # Navigate to the project
 cd showcase-images
@@ -86,20 +86,3 @@ The bottom-left UI provides:
 - **Config** — Toggle the Leva control panel
 
 When the Leva panel is visible, all parameters (gallery layout, motion, effects, border, dither, torus, bloom) can be adjusted in real time.
-
----
-
-## Author
-
-**Christian Ortiz** - Creative Developer
-
-## Connect
-
-- **Portfolio:** [cortiz.dev](https://cortiz.dev)
-- **YouTube:** [@cortizdev](https://youtube.com/@cortizdev)
-- **X (Twitter):** [@cortiz2894](https://twitter.com/cortiz2894)
-- **LinkedIn:** [Christian Daniel Ortiz](https://linkedin.com/in/christian-daniel-ortiz)
-
-## Contact
-
-For inquiries, collaborations or questions: **cortiz2894@gmail.com**
