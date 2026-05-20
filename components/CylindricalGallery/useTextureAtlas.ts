@@ -1,9 +1,8 @@
-import { useMemo, useRef } from "react";
-import { useLoader } from "@react-three/fiber";
-import { TextureLoader, CanvasTexture, LinearFilter, ClampToEdgeWrapping } from "three";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { CanvasTexture, LinearFilter, ClampToEdgeWrapping } from "three";
 
 interface AtlasMetadata {
-  atlas: CanvasTexture;
+  atlas: CanvasTexture | null;
   cols: number;
   rows: number;
   uniqueCount: number;
@@ -13,8 +12,40 @@ interface AtlasMetadata {
   atlasCanvasRef: React.RefObject<HTMLCanvasElement | OffscreenCanvas | null>;
 }
 
+function isVideo(url: string) {
+  return /\.(mp4|webm|ogg)$/i.test(url);
+}
+
+function loadImage(url: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+function loadVideoFrame(url: string): Promise<HTMLVideoElement> {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement("video");
+    video.crossOrigin = "anonymous";
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = "auto";
+    const onSeeked = () => resolve(video);
+    video.addEventListener("loadeddata", () => { video.currentTime = 0.001; }, { once: true });
+    video.addEventListener("seeked", onSeeked, { once: true });
+    video.onerror = reject;
+    video.src = url;
+    video.load();
+  });
+}
+
 export function useTextureAtlas(images: string[]): AtlasMetadata {
   const atlasCanvasRef = useRef<HTMLCanvasElement | OffscreenCanvas | null>(null);
+  const [atlas, setAtlas] = useState<CanvasTexture | null>(null);
+  const [atlasInfo, setAtlasInfo] = useState({ cols: 1, rows: 1 });
 
   // Deduplicate images
   const uniqueImages = useMemo(() => Array.from(new Set(images)), [images]);
@@ -24,60 +55,69 @@ export function useTextureAtlas(images: string[]): AtlasMetadata {
     return images.map((img) => uniqueImages.indexOf(img));
   }, [images, uniqueImages]);
 
-  // Load unique textures
-  const textures = useLoader(TextureLoader, uniqueImages);
+  useEffect(() => {
+    let cancelled = false;
 
-  const { atlas, cols, rows } = useMemo(() => {
-    const count = uniqueImages.length;
-    const cols = Math.ceil(Math.sqrt(count));
-    const rows = Math.ceil(count / cols);
+    async function buildAtlas() {
+      const mediaElements = await Promise.all(
+        uniqueImages.map((url) => isVideo(url) ? loadVideoFrame(url) : loadImage(url))
+      );
+      if (cancelled) return;
 
-    // Each tile size — use the first texture's natural dimensions
-    const tileW = textures[0]?.image?.width || 512;
-    const tileH = textures[0]?.image?.height || 512;
-    const padding = 2;
+      const count = mediaElements.length;
+      const cols = Math.ceil(Math.sqrt(count));
+      const rows = Math.ceil(count / cols);
 
-    const canvasW = cols * (tileW + padding);
-    const canvasH = rows * (tileH + padding);
+      const first = mediaElements[0];
+      const tileW = (first instanceof HTMLVideoElement ? first.videoWidth : (first as HTMLImageElement).naturalWidth) || 512;
+      const tileH = (first instanceof HTMLVideoElement ? first.videoHeight : (first as HTMLImageElement).naturalHeight) || 512;
+      const padding = 2;
 
-    const canvas =
-      typeof OffscreenCanvas !== "undefined"
-        ? new OffscreenCanvas(canvasW, canvasH)
-        : document.createElement("canvas");
+      const canvasW = cols * (tileW + padding);
+      const canvasH = rows * (tileH + padding);
 
-    if ("width" in canvas) {
-      canvas.width = canvasW;
-      canvas.height = canvasH;
-    }
+      const canvas =
+        typeof OffscreenCanvas !== "undefined"
+          ? new OffscreenCanvas(canvasW, canvasH)
+          : document.createElement("canvas");
 
-    const ctx = canvas.getContext("2d") as
-      | CanvasRenderingContext2D
-      | OffscreenCanvasRenderingContext2D;
+      if ("width" in canvas) {
+        canvas.width = canvasW;
+        canvas.height = canvasH;
+      }
 
-    if (ctx) {
-      for (let i = 0; i < count; i++) {
-        const col = i % cols;
-        const row = Math.floor(i / cols);
+      const ctx = canvas.getContext("2d") as
+        | CanvasRenderingContext2D
+        | OffscreenCanvasRenderingContext2D;
+
+      if (ctx) {
+        for (let i = 0; i < count; i++) {
+          const col = i % cols;
+          const row = Math.floor(i / cols);
         const x = col * (tileW + padding);
-        const y = row * (tileH + padding);
-        const img = textures[i]?.image;
-        if (img) {
-          ctx.drawImage(img, x, y, tileW, tileH);
+          const y = row * (tileH + padding);
+          ctx.drawImage(mediaElements[i], x, y, tileW, tileH);
         }
+      }
+
+      const atlasTexture = new CanvasTexture(canvas as HTMLCanvasElement);
+      atlasTexture.minFilter = LinearFilter;
+      atlasTexture.magFilter = LinearFilter;
+      atlasTexture.wrapS = ClampToEdgeWrapping;
+      atlasTexture.wrapT = ClampToEdgeWrapping;
+      atlasTexture.needsUpdate = true;
+
+      atlasCanvasRef.current = canvas as HTMLCanvasElement;
+
+      if (!cancelled) {
+        setAtlasInfo({ cols, rows });
+        setAtlas(atlasTexture);
       }
     }
 
-    const atlasTexture = new CanvasTexture(canvas as HTMLCanvasElement);
-    atlasTexture.minFilter = LinearFilter;
-    atlasTexture.magFilter = LinearFilter;
-    atlasTexture.wrapS = ClampToEdgeWrapping;
-    atlasTexture.wrapT = ClampToEdgeWrapping;
-    atlasTexture.needsUpdate = true;
+    buildAtlas();
+    return () => { cancelled = true; };
+  }, [uniqueImages]);
 
-    atlasCanvasRef.current = canvas as HTMLCanvasElement;
-
-    return { atlas: atlasTexture, cols, rows };
-  }, [textures, uniqueImages]);
-
-  return { atlas, cols, rows, uniqueCount: uniqueImages.length, indexMap, atlasCanvasRef };
+  return { atlas, cols: atlasInfo.cols, rows: atlasInfo.rows, uniqueCount: uniqueImages.length, indexMap, atlasCanvasRef };
 }

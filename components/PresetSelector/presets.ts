@@ -8,6 +8,7 @@ export interface PresetValues {
     borderEmission: number;
   };
   dither: {
+    ditherEnabled: boolean;
     ditherUseColor: boolean;
     ditherFgColor: string;
     ditherGap: number;
@@ -26,6 +27,7 @@ export const PRESETS: Record<string, PresetValues> = {
       borderEmission: 0,
     },
     dither: {
+      ditherEnabled: false,
       ditherUseColor: true,
       ditherFgColor: "#ffffff",
       ditherGap: 2.75,
@@ -43,6 +45,7 @@ export const PRESETS: Record<string, PresetValues> = {
       borderEmission: 1.6,
     },
     dither: {
+      ditherEnabled: false,
       ditherUseColor: false,
       ditherFgColor: "#6df4ce",
       ditherGap: 5.5,

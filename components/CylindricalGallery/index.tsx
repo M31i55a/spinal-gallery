@@ -73,7 +73,7 @@ const CylindricalGallery = forwardRef<CylindricalGalleryHandle, CylindricalGalle
   // Leva controls
   const { imageScale, radius, spiralStep, imagesPerTurn, curvature } =
     useControls("Gallery", {
-      imageScale: { value: 0.83, min: 0.3, max: 2, step: 0.01, label: "Image Size" },
+      imageScale: { value: 1.3, min: 0.3, max: 2, step: 0.01, label: "Image Size" },
       radius: { value: RADIUS, min: 1, max: 10, step: 0.1, label: "Radius" },
       spiralStep: { value: SPIRAL_STEP, min: 0.3, max: 5, step: 0.05, label: "Spiral Step" },
       imagesPerTurn: { value: IMAGES_PER_TURN, min: 2, max: 10, step: 1, label: "Images / Turn" },
@@ -98,7 +98,7 @@ const CylindricalGallery = forwardRef<CylindricalGalleryHandle, CylindricalGalle
       opacity: { value: 1, min: 0, max: 1, step: 0.01, label: "Opacity" },
       emission: { value: 0.65, min: 0, max: 3, step: 0.05, label: "Emission" },
       saturation: { value: 1.50, min: 0, max: 3, step: 0.05, label: "Saturation" },
-      brightness: { value: 1.15, min: 0.2, max: 3, step: 0.05, label: "Brightness" },
+      brightness: { value: 0.85, min: 0.2, max: 3, step: 0.05, label: "Brightness" },
       scanLines: { value: 0.6, min: 0, max: 1, step: 0.05, label: "Scan Lines" },
       scanLineSpeed: { value: 3.9, min: 0, max: 5, step: 0.1, label: "Scan Speed" },
       scanLineDensity: { value: 25, min: 5, max: 100, step: 1, label: "Scan Density" },
@@ -138,7 +138,7 @@ const CylindricalGallery = forwardRef<CylindricalGalleryHandle, CylindricalGalle
 
   const [{ ditherEnabled, ditherCellSize, ditherGap, ditherContrast, ditherMode, ditherShape, ditherBaseScale, ditherIntensity, ditherBgColor, ditherUseColor, ditherFgColor }, setDither] =
     useControls("Dither", () => ({
-      ditherEnabled: { value: true, label: "Enabled" },
+      ditherEnabled: { value: false, label: "Enabled" },
       ditherCellSize: { value: 2, min: 0, max: 10, step: 1, label: "Cell Size" },
       ditherGap: { value: 2.75, min: 0, max: 20, step: 0.25, label: "Gap" },
       ditherContrast: { value: 0.0, min: -1, max: 1, step: 0.01, label: "Contrast" },
@@ -377,6 +377,8 @@ const CylindricalGallery = forwardRef<CylindricalGalleryHandle, CylindricalGalle
       posYAttr.needsUpdate = true;
     }
   });
+
+  if (!atlas) return null;
 
   return (
     <instancedMesh
