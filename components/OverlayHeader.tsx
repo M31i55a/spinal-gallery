@@ -23,7 +23,7 @@ export default function OverlayHeader() {
           marginBottom: 6,
         }}
       >
-        OPEN SOURCE WORKSPACE
+        CODE ARTIST PORTFOLIO
       </div>
 
       {/* Horizontal rule */}
@@ -47,7 +47,7 @@ export default function OverlayHeader() {
           margin: 0,
         }}
       >
-        SHOWCASE IMAGES
+        MY ART GALLERY
       </h1>
 
       {/* Designation subtitle */}
@@ -62,7 +62,7 @@ export default function OverlayHeader() {
           marginTop: 4,
         }}
       >
-        3D GALLERY IMAGES / VIDEOS
+        PAINTINGS & DRAWINGS / SOFTWARE
       </div>
 
       {/* Rev / Date metadata */}
@@ -76,7 +76,7 @@ export default function OverlayHeader() {
           opacity: 0.7,
         }}
       >
-        V 2.0 &mdash; {dateStr.toUpperCase()} &mdash; R3F / WEBGL
+        V 2.0 &mdash; {dateStr.toUpperCase()} &mdash; CODE &times; ART
       </div>
     </div>
   );

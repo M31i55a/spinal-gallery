@@ -12,8 +12,8 @@ const pressStart2P = Press_Start_2P({
 });
 
 export const metadata: Metadata = {
-  title: 'Showcase Image Gallery',
-  description: '3D Gallery Resource',
+  title: 'My Art Gallery',
+  description: 'Paintings and drawings by a software engineer and artist',
 };
 
 export default function RootLayout({
