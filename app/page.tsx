@@ -45,9 +45,6 @@ const MOCK_IMAGES = [
   "/images/33.jpeg",
   "/images/34.jpeg",
   "/images/35.jpeg",
-  "/images/0.mp4",
-  "/images/1.mp4",
-  "/images/2.mp4",
 ];
 
 

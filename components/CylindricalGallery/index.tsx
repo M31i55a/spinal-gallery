@@ -85,7 +85,7 @@ const CylindricalGallery = forwardRef<CylindricalGalleryHandle, CylindricalGalle
       momentum: { value: 0.87, min: 0.5, max: 0.99, step: 0.01, label: "Momentum" },
       scrollAdvanceSpeed: { value: 0.17, min: 0, max: 2, step: 0.01, label: "Scroll Advance Speed" },
       autoRotateSpeed: { value: 0.002, min: 0, max: 0.02, step: 0.0005, label: "Auto-rotate Speed" },
-      scrollRotateForce: { value: 1.75, min: 0, max: 5, step: 0.05, label: "Scroll Rotate Force" },
+      scrollRotateForce: { value: 0.5, min: 0, max: 5, step: 0.05, label: "Scroll Rotate Force" },
       maxRotationSpeed: { value: 0.15, min: 0.005, max: 0.2, step: 0.005, label: "Max Rotation Speed" },
       rotationSmoothing: { value: 0.09, min: 0.005, max: 0.2, step: 0.005, label: "Rotation Smoothing" },
     });

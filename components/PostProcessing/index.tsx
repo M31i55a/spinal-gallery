@@ -11,7 +11,7 @@ interface PostProcessingProps {
 const PostProcessing = ({ preset }: PostProcessingProps) => {
   const [{ bloomIntensity, bloomThreshold, bloomSmoothing, bloomRadius }, setBloom] =
     useControls("Bloom", () => ({
-      bloomIntensity: { value: 1.2, min: 0, max: 10, step: 0.1, label: "Intensity" },
+      bloomIntensity: { value: 0, min: 0, max: 10, step: 0.1, label: "Intensity" },
       bloomThreshold: { value: 0.01, min: 0, max: 2, step: 0.01, label: "Threshold" },
       bloomSmoothing: { value: 0.45, min: 0, max: 1, step: 0.05, label: "Smoothing" },
       bloomRadius: { value: 0.65, min: 0, max: 1, step: 0.05, label: "Radius" },

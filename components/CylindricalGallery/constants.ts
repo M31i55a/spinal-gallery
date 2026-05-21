@@ -1,4 +1,4 @@
-export const NUM_INSTANCES = 39;
+export const NUM_INSTANCES = 36;
 export const RADIUS = 6;
 export const MAX_ROTATION_SPEED = 0.08;
 
